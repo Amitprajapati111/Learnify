@@ -15,18 +15,26 @@ const Login = () => {
     const navigate = useNavigate();
     const [error, setError] = useState('');
     const [loadingRole, setLoadingRole] = useState(null);
+    const [isManualLoading, setIsManualLoading] = useState(false);
+
+    const isAnyLoading = isManualLoading || loadingRole !== null;
 
     const handleSubmit = async (e) => {
         if (e) e.preventDefault();
+        setError('');
+        setIsManualLoading(true);
         try {
             await login(email, password);
             navigate('/dashboard');
         } catch (err) {
             setError('Invalid email or password');
+        } finally {
+            setIsManualLoading(false);
         }
     };
 
     const handleQuickLogin = async (userEmail, userPassword, roleName) => {
+        if (isAnyLoading) return;
         setEmail(userEmail);
         setPassword(userPassword);
         setError('');
@@ -336,10 +344,21 @@ const Login = () => {
                             {/* Submit Button */}
                             <button
                                 type="submit"
-                                className="w-full mt-0.5 py-1.5 sm:py-2 lg:py-2 px-3 bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white font-extrabold text-xs lg:text-sm rounded-lg shadow-sm shadow-blue-600/25 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                                disabled={isAnyLoading}
+                                className="w-full mt-0.5 py-1.5 sm:py-2 lg:py-2 px-3 bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white font-extrabold text-xs lg:text-sm rounded-lg shadow-sm shadow-blue-600/25 transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-85 disabled:cursor-wait min-h-[34px] sm:min-h-[38px]"
                             >
-                                <LogIn size={14} className="lg:w-4 lg:h-4" />
-                                Sign in
+                                {isManualLoading ? (
+                                    <div className="flex items-center justify-center gap-1.5 py-1">
+                                        <span className="w-2 h-2 bg-white rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                                        <span className="w-2 h-2 bg-white rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                                        <span className="w-2 h-2 bg-white rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <LogIn size={14} className="lg:w-4 lg:h-4" />
+                                        Sign in
+                                    </>
+                                )}
                             </button>
                         </form>
 
@@ -361,8 +380,8 @@ const Login = () => {
                                 return (
                                     <div
                                         key={demo.role}
-                                        onClick={() => handleQuickLogin(demo.email, demo.password, demo.role)}
-                                        className={`group p-1.5 sm:p-1.5 lg:p-2 rounded-lg border border-slate-800 bg-[#142036]/70 ${demo.cardHover} cursor-pointer transition-all duration-200 flex items-center justify-between gap-2`}
+                                        onClick={() => !isAnyLoading && handleQuickLogin(demo.email, demo.password, demo.role)}
+                                        className={`group p-1.5 sm:p-1.5 lg:p-2 rounded-lg border border-slate-800 bg-[#142036]/70 ${isAnyLoading ? 'opacity-60 cursor-not-allowed' : `${demo.cardHover} cursor-pointer`} transition-all duration-200 flex items-center justify-between gap-2`}
                                     >
                                         <div className="flex items-center space-x-2 min-w-0 overflow-hidden">
                                             <div className={`p-1 lg:p-1.5 rounded-full ${demo.badgeStyle} shrink-0`}>
@@ -385,13 +404,17 @@ const Login = () => {
                                             type="button"
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                handleQuickLogin(demo.email, demo.password, demo.role);
+                                                if (!isAnyLoading) handleQuickLogin(demo.email, demo.password, demo.role);
                                             }}
-                                            disabled={isThisLoading}
-                                            className={`text-[10px] lg:text-xs font-bold px-2 lg:px-2.5 py-0.5 lg:py-1 rounded-md transition-all flex items-center gap-0.5 shrink-0 ${demo.btnStyle} cursor-pointer`}
+                                            disabled={isAnyLoading}
+                                            className={`text-[10px] lg:text-xs font-bold px-2 lg:px-2.5 py-0.5 lg:py-1 rounded-md transition-all flex items-center justify-center gap-0.5 shrink-0 ${demo.btnStyle} cursor-pointer disabled:opacity-85 disabled:cursor-wait min-w-[62px] min-h-[26px]`}
                                         >
                                             {isThisLoading ? (
-                                                <span>...</span>
+                                                <div className="flex items-center justify-center gap-1 py-1 px-1">
+                                                    <span className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                                                    <span className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                                                    <span className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                                                </div>
                                             ) : (
                                                 <>
                                                     Login <ArrowRight size={10} className="lg:w-3 lg:h-3 group-hover:translate-x-0.5 transition-transform" />
