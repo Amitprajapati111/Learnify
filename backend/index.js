@@ -6,6 +6,7 @@ const http = require('http');
 const { Server } = require('socket.io');
 const connectDB = require('./config/db');
 const path = require('path');
+const { timeStamp } = require('console');
 
 dotenv.config();
 
@@ -16,6 +17,16 @@ const io = new Server(server, {
     origin: '*',
     methods: ['GET', 'POST']
   }
+});
+
+
+//Health Chack Route
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: "OK",
+    message:"Lernify backend is running",
+    timeStamp:new Date().toISOString()
+  });
 });
 
 // Middleware
