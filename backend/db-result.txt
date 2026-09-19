@@ -1,9 +1,4 @@
-Class found: YES
-Total DB Classes: 1
-[
-  {
-    "_id": "69a86d8922c5df62ea76ccb7",
-    "topic": "Agile-001",
-    "roomId": "4b45174f-6134-4e40-9c7e-930167266a71"
-  }
-]
+MongooseServerSelectionError: Could not connect to any servers in your MongoDB Atlas cluster. One common reason is that you're trying to access the database from an IP that isn't whitelisted. Make sure your current IP address is on your Atlas cluster's IP whitelist: https://www.mongodb.com/docs/atlas/security-whitelist/
+    at _handleConnectionErrors (C:\Learnify\backend\node_modules\mongoose\lib\connection.js:1169:11)
+    at NativeConnection.openUri (C:\Learnify\backend\node_modules\mongoose\lib\connection.js:1100:11)
+    at async C:\Learnify\backend\test-db.js:8:9
